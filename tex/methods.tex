@@ -1,0 +1,173 @@
+\section{Theory and Methods}
+
+\subsection{Heat equation}
+We will look at the heat equation in one dimension.
+\begin{equation*}
+    \frac{\partial^2 u(x,t)}{\partial x^2} =\frac{\partial u(x,t)}{\partial t},
+    t\geq 0, x\in [0,L]
+\end{equation*}
+or
+\begin{equation*}
+    u_{xx} = u_t,
+\end{equation*}
+with initial conditions
+\begin{equation*}
+    u(x,0)= \sin{(\pi x)} \hspace{0.5cm} 0 \leq x \leq L,
+\end{equation*}
+and with $L=1$ being the length of the $x$-region of interest. The 
+boundary conditions are
+\begin{equation*}
+    u(0,t)= 0 \hspace{0.5cm} t \ge 0,
+\end{equation*}
+and
+\begin{equation*}
+    u(L,t)= 0 \hspace{0.5cm} t \ge 0.
+\end{equation*}
+
+\subsubsection{Closed-form solution}
+The analytical solution to this problem is derived in (Tveito and
+Winther, 2005, pp. 90-92)\cite{tveito}, so we will just present a small
+summary of the method here. First we assume that $u(x,t)$ is linear and homogeneous and 
+that the equation is separable in the form of $u_k(x,t)=X_k(x)T_k(t)$, where
+$k$ refers to it being a particular solution. We can then solve the equation 
+by separation of variables to find
+\begin{equation*}
+    u(x,t)_k=e^{-(k\pi/L)^2t}\sin{\left(\frac{k\pi}{L}x\right)},\ k=1,2,3,..
+\end{equation*}
+This will then give the family ${u_k}$ of particular solutions. We assume then
+that $f(x)$ can be written as a linear combination of the eigenfunctions of
+$X(x)$, so that
+\begin{equation*}
+    f(x)=\sum_{k=1}^{N} c_k \sin{\left(\frac{k\pi}{L}x\right)},
+\end{equation*}
+where $c_k$ is some constant. Then it follows by linearity that
+\begin{equation*}
+u(x,t)=\sum_{k=1}^N c_ke^{-(k\pi/L)^2t}\sin{\left(\frac{k\pi}{L}x\right)}.
+\end{equation*}
+
+Now inserting that $f(x)=\sin(\pi x)$ and $L=1$ it is easy to see that this
+gives $c_1=1$ and all other constants $c_k=0$. This gives us the \textbf{closed-form
+solution} of
+\begin{equation*}
+    u(x,t)=e^{-\pi^2 t}\sin{\left(\pi x\right)}.
+\end{equation*}
+
+\subsubsection{Numerical approximation}
+We will solve this by so called FTCS-scheme (Forward Time Central Space) and
+use the Forward-Euler method for moving in time. This results in
+
+\begin{equation*}
+u_t\approx \frac{u(x,t+\Delta t)-u(x,t)}{\Delta t}=\frac{u(x_i,t_j+\Delta t)-u(x_i,t_j)}{\Delta t}
+\end{equation*}
+and
+\begin{equation*}
+u_{xx}\approx \frac{u(x+\Delta x,t)-2u(x,t)+u(x-\Delta x,t)}{\Delta x^2},
+\end{equation*}
+or
+\begin{equation*}
+    u_{xx}\approx \frac{u(x_i+\Delta x,t_j)-2u(x_i,t_j)+u(x_i-\Delta x,t_j)}{\Delta x^2}.
+\end{equation*}
+And to simplify notation, let
+\begin{equation*}
+    u(x_i, t_j + \Delta t)\rightarrow u_{i,j+1},
+\end{equation*}
+and
+\begin{equation*}
+    u(x_i+\Delta x, t_j) \rightarrow u_{i+1, j}.
+\end{equation*}
+
+Then we re-write the equation as
+
+$$
+    \frac{u_{i,j+1}-u_{i,j}}{\Delta t} = \frac{u_{i+1,j}+u_{i-1,j}-2u_{i,j}}{\Delta
+    x^2}.
+$$
+Now we can define $\alpha=\Delta t / \Delta x^2$ to get
+
+\begin{equation}
+    u_{i,j+1}=\alpha u_{i-1,j} + (1-2\alpha) u_{i,j}+\alpha u_{i+1,j},
+\end{equation}
+
+Where we have discretized $x$ and $t$ so that
+$$
+    x_i = i\Delta x,\ i=0,1,2,...,n,
+$$
+and
+$$
+    t_j = j\Delta t,\ j=0,1,2,...,m.
+$$
+
+And this scheme is only numerically stable when the \textbf{Von Neumann
+stability criterion} is met:
+$$
+    \alpha\leq 1/2,
+$$ 
+as described in (Tveito and
+Winther, 2005, pp. 132-133)\cite{tveito}. And it has a \textbf{truncation
+error} of
+$O(\Delta x^2)$ (Tveito and Winther, 2005, p. 64).
+
+We note that this problem can be reduced to solving a matrix system, where
+$$
+    A=
+    \begin{bmatrix}
+        1-2\alpha & \alpha & 0 & 0 & ... & 0 \\
+        \alpha    & 1-2\alpha & \alpha & 0 ... & 0 \\
+        0 & \alpha & 1-2\alpha & \alpha & 0 & ... \\
+        ... & ... & ... & ... & ... & ... \\
+        0 & ... & ... & 0 & \alpha & 1-2\alpha
+    \end{bmatrix}
+$$
+is a tri-diagonal Topelitz matrix. And we can define a column vector for the
+time step as
+$$
+    V_j = 
+    \begin{bmatrix}
+        u_{1,j}\\
+        u_{2,j}\\
+        ...\\
+        u_{n,j}
+    \end{bmatrix}
+$$
+so that
+\begin{equation}
+    V_{j+1} = AV_j.
+\end{equation}
+
+
+\begin{algorithm}
+    \caption{Toeplitz Forward solver algorithm}\label{algo:toeplitz}
+    \begin{algorithmic}
+        \Require{Spacial step-size $\Delta x$}
+        
+        \Require{Timespan $T$ and lengthspan $L$.}
+        
+        \Require{Stability criterion parameter $\alpha$.}
+        
+        \Require{Function f(x)=u(x,0).}
+        
+        Calculate diagonal elements: $a=\alpha$, $b=1-2\alpha$.
+    
+        Calculate first timestep $u(x,0)=f(x)$ and set boundary conditions.
+    
+        \While{Time is less than $T$}
+            
+            $u(x, t+\Delta t) = a \cdot u(x-\Delta x, t) + b\cdot u(x,
+            t) + a \cdot u(x+\Delta x, t)$.
+    
+            Set boundary conditions.
+        \EndWhile
+    
+    \end{algorithmic}
+    \end{algorithm}
+    
+    We will forward solve using the the algorithm in \ref{algo:toeplitz}. This is a
+    method of solving a tri-diagonal matrix system without having to do the matrix
+    multiplication. 
+    
+    For our program we have chosen to hold the entire solution in space and time in
+    memory. But it is also possible to iterate in time without holding in memory
+    and just save the time-steps you want to look at. But for the 1D case this is
+    not a concern on a modern computer as we will look at arrays with a maximum of
+    $10^4\times 10^4$, which will be under one Megabyte with 32-bit numbers.
+    

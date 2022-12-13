@@ -1,0 +1,74 @@
+% {{{
+\documentclass[a4paper,10pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx, verbatim, amsmath, amsfonts, geometry, float, import, bm}
+\usepackage{siunitx} % converts expression to SI units/notation , \num{10e-10}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\usepackage{biblatex}
+
+
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+% \bibliography{refs}
+
+%Box around tex
+\usepackage{mdframed}
+
+%Subfigures
+\usepackage{caption, subcaption}
+
+\usepackage{gensymb}
+
+
+% Code higligthing
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+
+\lstdefinestyle{mystyle}{
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=4
+}
+\lstset{style=mystyle}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{1.5mm}
+
+% }}}
+
+
+\title{FYS-STK4155 - Project 3}
+\author{Tor-Andreas Bjone}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\input{./abstract.tex}
+\input{./introduction.tex}
+\input{./methods.tex}
+\input{./results.tex}
+\input{./conclusion.tex}
+
+
+\section*{References}  
+\begin{itemize}
+\bibitem[1]{1} Tveito, A. \& Winther, R. (2005) Introduction to Partial Differential Equations: A computational approach. 2nd edn. New York, NY, USA: Springer.
+\end{itemize}
+
+\end{document}
