@@ -2,31 +2,28 @@
 
 \subsection{Heat equation}
 We will look at the heat equation in one dimension.
-\begin{equation*}
+\begin{equation}
     \frac{\partial^2 u(x,t)}{\partial x^2} =\frac{\partial u(x,t)}{\partial t},
     t\geq 0, x\in [0,L]
-\end{equation*}
+\end{equation}
 or
-\begin{equation*}
+\begin{equation}\label{eq:heat_eq}
     u_{xx} = u_t,
-\end{equation*}
+\end{equation}
 with initial conditions
-\begin{equation*}
+\begin{equation}\label{eq:boundary_x}
     u(x,0)= \sin{(\pi x)} \hspace{0.5cm} 0 \leq x \leq L,
-\end{equation*}
+\end{equation}
 and with $L=1$ being the length of the $x$-region of interest. The 
 boundary conditions are
-\begin{equation*}
-    u(0,t)= 0 \hspace{0.5cm} t \ge 0,
-\end{equation*}
-and
-\begin{equation*}
-    u(L,t)= 0 \hspace{0.5cm} t \ge 0.
-\end{equation*}
+\begin{align}\label{eq:boundary_t}
+    u(0,t) &= 0 \hspace{0.5cm} t \ge 0,
+    u(L,t) &= 0 \hspace{0.5cm} t \ge 0.
+\end{align}
 
 \subsubsection{Closed-form solution}
 The analytical solution to this problem is derived in (Tveito and
-Winther, 2005, pp. 90-92)\cite{tveito}, so we will just present a small
+Winther, 2005, pp. 90-92)\cite{1}, so we will just present a small
 summary of the method here. First we assume that $u(x,t)$ is linear and homogeneous and 
 that the equation is separable in the form of $u_k(x,t)=X_k(x)T_k(t)$, where
 $k$ refers to it being a particular solution. We can then solve the equation 
@@ -103,9 +100,9 @@ $$
     \alpha\leq 1/2,
 $$ 
 as described in (Tveito and
-Winther, 2005, pp. 132-133)\cite{tveito}. And it has a \textbf{truncation
+Winther, 2005, pp. 132-133)\cite{1}. And it has a \textbf{truncation
 error} of
-$O(\Delta x^2)$ (Tveito and Winther, 2005, p. 64).
+$O(\Delta x^2)$ (Tveito and Winther, 2005, p. 64)\cite{1}.
 
 We note that this problem can be reduced to solving a matrix system, where
 $$
@@ -134,6 +131,7 @@ so that
     V_{j+1} = AV_j.
 \end{equation}
 
+And this can be Forward solved using the Toeplitz forward solver algorithm \ref{algo:toeplitz}.
 
 \begin{algorithm}
     \caption{Toeplitz Forward solver algorithm}\label{algo:toeplitz}
@@ -161,7 +159,7 @@ so that
     \end{algorithmic}
     \end{algorithm}
     
-    We will forward solve using the the algorithm in \ref{algo:toeplitz}. This is a
+    This is a
     method of solving a tri-diagonal matrix system without having to do the matrix
     multiplication. 
     
@@ -170,4 +168,60 @@ so that
     and just save the time-steps you want to look at. But for the 1D case this is
     not a concern on a modern computer as we will look at arrays with a maximum of
     $10^4\times 10^4$, which will be under one Megabyte with 32-bit numbers.
-    
+   
+\subsection{Solving with Neural Networks}
+We will use the \textbf{keras API for TensorFlow} to approximate the heat
+equation with a NN. To train the network we will use the analytical solution
+with the mean squared error as the cost function. This is done by creating a
+matrix $X$ that holds all $x$ and $t$ values and a matrix $u$ with the
+corresponding analytical values. We will let $x$ be of length $n=100$ and $t$
+be of length $m=100$ for the training of the network. Then for the testing we
+will double the size of $n$ and $m$. We do not need to shuffle the dataset or
+do a train/test split when testing in this way, although some of the training
+set will be included in the test set when doing it this way. This will not matter
+as we increase the size of the dataset for the testing and will therefore be
+able to spot overfitting if it should happen.
+
+We will set up the network
+with 3 hidden layers, with 16 neurons in the first layer, then 32 neurons in
+the following two layers. This will be tested using the Adam and RMSprop
+optimizers, and ReLu and Sigmoid activation functions. Then we will take the
+best performing of these and increase the complexity of the network by adding
+new layers of 32 neurons. These will all be trained using a batch size of 30
+and 20 epochs.
+
+Then we will look at the time the trained network uses for giving out a
+prediction, or feed forwarding, for a two layer network versus the explicit solver. 
+Where this network has been trained using RMSprop and has ReLu activation functions.
+
+
+
+
+
+
+\begin{comment}
+But since the exact solution will
+most likely not be reached we can instead try to minimize the given conditions
+of the equation. We re-write the heat equation and the boundaries as a minimization problem
+\begin{equation*}
+    \min_{x,t} \left\{
+    \lVert \hat u_{xx} - \hat u_t \rVert^2 
+    + \lVert \hat u(0,t) \rVert^2 
+    + \lVert \hat u(1,t) \rVert^2
+    + \lVert \hat u(x,0)-\sin{(\pi x)}\rVert^2 \right\},
+\end{equation*}
+where this norm $\lVert \cdot \rVert$ is to be read as the grand sum of the
+matrix. We then define our cost/loss-function as
+\begin{equation*}
+    C(\hat u) =\frac{1}{2} \left[ \lVert \hat u_{xx} - \hat u_t \rVert^2 
+    + \lVert \hat u(0,t) \rVert^2 
+    + \lVert \hat u(1,t) \rVert^2
+    + \lVert \hat u(x,0)-\sin{(\pi x)}\rVert^2 \right]
+\end{equation*}
+
+For the backpropagation of our network we need the derivative of this with
+respect to the output of the network, which is $\hat u$.
+\begin{equation*}
+    \frac{\partial C}{\partial\hat u} = 
+\end{equation*}
+\end{comment}
