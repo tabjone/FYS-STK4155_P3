@@ -52,7 +52,7 @@
 
 % }}}
 
-\title{FYS-STK4155 - Project 3}
+\title{Exploring advantages/disadvantages of solving PDEs with Neural Networks}
 \author{Tor-Andreas Bjone}
 
 \begin{document}
@@ -73,5 +73,25 @@
 \bibitem[2]{2} Humfeld, K \& Zobeiry, N. (2020)  Physics-Informed Machine Learning Approach for Solving Heat Transfer Equation
     in Advanced Manufacturing and Engineering Applications. Washington, Seattle, WA: University of Washington
 \end{itemize}
+
+
+
+\begin{figure}
+\centering
+\subfigure[Rms, ReLu]{\label{fig:a}\includegraphics[width=70mm]{../Figures/error_rms_relu.png}}
+\subfigure[Rms, Sigmoid]{\label{fig:b}\includegraphics[width=70mm]{../Figures/error_rms_sigmoid.png}}
+\subfigure[Adam, ReLu]{\label{fig:c}\includegraphics[width=70mm]{../Figures/error_adam_relu.png}}
+\subfigure[Adam, Sigmoid]{\label{fig:d}\includegraphics[width=70mm]{../Figures/error_adam_sigmoid.png}}
+\subfigure[Explicit solver]{\label{fig:e}\includegraphics[width=70mm]{../Figures/error_explicit.png}}
+\caption{Absolute error for NN in (a)-(d) and explicit solver in (e). NN is
+trained with 20 epochs and a batch size of 30 with $(n=100)\times (m=100)$
+data points of $x$
+and $t$ respectively, using the analytical solution for MSE as the loss
+function. The networks have three hidden layers, one of 16 neurons and two of 32.
+The explicit solver in (e) is using $\Delta x=0.1$ and $\alpha=1/4$.}
+\label{fig:abs_error_all}
+\end{figure}
+
+
 
 \end{document}

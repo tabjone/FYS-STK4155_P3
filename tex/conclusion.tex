@@ -1,1 +1,33 @@
-Possible future work: create cost function based on minimization of the heat eq
+\section{Conclusion}
+\begin{comment}
+State your main findings and interpretations. 
+Try as far as possible to present perspectives for future work. 
+Try to discuss the pros and cons of the methods and possible improvements.
+\end{comment}
+
+For the Neural Network we found that the simpler networks performed better on
+this problem. Specifically a 3 layer network trained using RMSprop, with ReLu
+activation functions performed best in terms om the MSE against the analytical
+solution. But we found that the explicit solver performed better, with about
+two-three orders of magnitude lower MSE. This is mostly because of the boundary
+conditions, as there is no implementation in the networks to penalize high MSE
+on the boundaries. For future work we could create a cost function for the
+network as described in the previous section, by looking at the minimization
+problem of the heat equation and the boundary conditions.
+
+We also found that the time the already trained network used to predict a
+solution was about two orders of magnitude slower than the time used for the
+explicit solver. This indicates that for such a simple problem there is no
+benefits to using a Neural Network. For future work one could also look at
+implicit schemes such as Crank-Nicolson, which is stable for all $\Delta x$ and
+$\Delta t$ and could possibly solve even faster. 
+
+One could imagine that as the complexity of the problem increased the Neural
+Network would perform better compared to the explicit scheme. Therefore it
+would be beneficial to look at the heat equation in 2D and 3D. And if we have a
+cost function that is not based on an analytical solution, we could train the
+network with ICs as parameters and see if the network can predict for ICs that
+it has not been trained on. In that case one could solve problems without
+closed-form solutions.
+
+

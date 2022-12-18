@@ -1,0 +1,27 @@
+\section{Introduction}
+\begin{comment}
+In this report we will look at ...
+Motivate the reader, the first part of the introduction gives always a
+motivation and tries to give the overarching ideas. What I have done. 
+The structure of the report, how it is organised. Explain structure of the rapport at the end of intro. 
+\end{comment}
+
+In recent years the applications of Neural Networks have been expanded
+massively. There has been done a lot of research into solving PDEs with Neural
+Networks, such as the paper (Zobeiry \& Humfeld, 2020)\cite{2}.
+Solving/approximating such
+systems as the Schrödinger equation or the Navier-Stokes equation with no
+closed-form solutions can be very beneficial. 
+
+In this report we will tackle a simple problem, the heat equation in 1D, to see how a Neural Network
+performs against a conventional numerical method, the Forward Time Central
+Space (FTCS) scheme. To evaluate the methods we choose a boundary condition with a closed-form
+solution and look at the difference between this and our numerical solutions.
+And to set up the Neural Network we use Keras, which is a TensorFlow API.
+
+
+The method section first goes trough through the closed-form solution and then
+the Neural Network. And the results start by comparison of the mean squared
+error (MSE) before looking at the time it takes to solve using the explicit
+method versus the Neural Network.
+
